@@ -30,12 +30,6 @@ class CalculateOrderDiscountBad {
   }
 }
 
-interface Card {
-  number: number;
-  cvv: number;
-  expiration: number;
-}
-
 interface PaymentMethod {
   getDiscountAmount: (amount: number) => number;
 }
@@ -46,17 +40,14 @@ class Pix implements PaymentMethod {
   }
 }
 
-class Credit implements PaymentMethod, Card {
+class Credit implements PaymentMethod {
   private installments: number;
   number: number;
   cvv: number;
   expiration: number;
 
-  constructor(installments: number, card: Card) {
+  constructor(installments: number) {
     this.installments = installments;
-    this.number = card.number;
-    this.cvv = card.cvv;
-    this.expiration = card.expiration;
   }
 
   getDiscountAmount(amount: number) {
@@ -72,17 +63,7 @@ class Credit implements PaymentMethod, Card {
   }
 }
 
-class Debit implements PaymentMethod, Card {
-  number: number;
-  cvv: number;
-  expiration: number;
-
-  constructor(card: Card) {
-    this.number = card.number;
-    this.cvv = card.cvv;
-    this.expiration = card.expiration;
-  }
-
+class Debit implements PaymentMethod {
   getDiscountAmount(amount: number) {
     return amount * 0.05;
   }
@@ -101,12 +82,8 @@ class CalculateOrderDiscount {
 }
 
 const calculateOrderDiscountPix = new CalculateOrderDiscount(new Pix());
-const calculateOrderDiscountDebit = new CalculateOrderDiscount(
-  new Debit({ cvv: 2, expiration: 2, number: 2 })
-);
-const calculateOrderDiscountCredit = new CalculateOrderDiscount(
-  new Credit(1, { cvv: 2, expiration: 2, number: 2 })
-);
+const calculateOrderDiscountDebit = new CalculateOrderDiscount(new Debit());
+const calculateOrderDiscountCredit = new CalculateOrderDiscount(new Credit(1));
 
 calculateOrderDiscountPix.execute(500);
 calculateOrderDiscountDebit.execute(500);
